@@ -14,13 +14,13 @@ Filter the VS that are enabled with VIP as SNAT
 
 auto_allocate_ip: 
 
-placement_networks: https://10.206.255.115/api/network/dvportgroup-64-cloud-43948b03-771f-4d99-ba28-ef6d584db699
+placement_networks: https://<ip-address>/api/network/dvportgroup-64-cloud-43948b03-771f-4d99-ba28-ef6d584db699
 
 """
 username = 'admin'
 password = 'password'
 
-controller_url = "https://10.206.255.115"
+controller_url = "https://<ip-address>"
 Headers = {"accept": "application/json", "X-Avi-Version": "30.2.1"}
 
 
