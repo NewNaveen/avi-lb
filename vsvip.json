@@ -1,0 +1,20 @@
+{
+  "name": "production_vsvip",
+  "vip": [
+    {
+      "subnet": {
+        "ip_addr": {
+          "addr": "100.64.149.0",
+          "type": "V4"
+        },
+        "mask": 24
+      },
+      "auto_allocate_ip": true,
+      "ip_address": {
+        "addr": "100.64.149.54",
+        "type": "V4"
+      }
+    }
+  ],
+  "east_west_placement": false
+}
