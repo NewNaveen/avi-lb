@@ -1,0 +1,20 @@
+cont = {
+    "name": "production_vsvip-2",
+    "vip": [
+        {
+            "subnet": {
+                "ip_addr": {
+                    "addr": "100.64.149.0",
+                    "type": "V4"
+                },
+                "mask": 24
+            },
+            "auto_allocate_ip": True,
+            "ip_address": {
+                "addr": "100.64.149.55",
+                "type": "V4"
+            }
+        }
+    ],
+    "east_west_placement": False
+}
