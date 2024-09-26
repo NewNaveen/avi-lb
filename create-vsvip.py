@@ -3,56 +3,49 @@ import requests
 from requests.auth import HTTPBasicAuth
 import time
 
+"""
+Get the CSRF token by running the below API 
+curl -X POST  --data "username=admin&password=Password" "https://<Ip-address>/login" -H "accept: application/json" -H "X-Avi-Version: 30.2.1" --insecure  -v
+
+"""
 username = 'admin'
-password = 'password'
+password = 'AviUser@123'
 
 controller_url = "https://<ip-address>"
-Headers = {"accept": "application/json", "X-Avi-Version": "30.2.1"}
+Headers = {"accept": "application/json", "X-Avi-Version": "30.2.1", "X-CSRFToken": "xxxxxxxxxxx"}
+
+cont = {
+    "name": "production_vsvip-2",
+    "vip": [
+        {
+            "subnet": {
+                "ip_addr": {
+                    "addr": "100.64.149.0",
+                    "type": "V4"
+                },
+                "mask": 24
+            },
+            "auto_allocate_ip": True,
+            "ip_address": {
+                "addr": "100.64.149.55",
+                "type": "V4"
+            }
+        }
+    ],
+    "east_west_placement": False
+}
 
 
-def get_all_tenants():
-    all_tenants = {}
-    tenant_url = f"{controller_url}/api/tenant"
-    tenant = requests.get(tenant_url, auth=HTTPBasicAuth(username, password), headers=Headers, verify=False)
+def create_vsvip():
+    # Tenant is required
+    vsvip_url = f"{controller_url}/api/vsvip"
+    res = requests.post(vsvip_url, auth=HTTPBasicAuth(username, password), headers=Headers, data=json.dumps(cont), verify=False)
     time.sleep(2)
-    tenant = tenant.json()
-
-    for i in tenant["results"]:
-        all_tenants.update({i["name"]: i["uuid"]})
-
-    return all_tenants
-
-
-# Get all VS from all tenants
-def all_vs(tenants):
-    vs_url = f"{controller_url}/api/virtualservice"
-    vs_with_snat = {}
-    vs_without_snat = {}
-    if len(tenants) > 0:
-        for name, uuid in tenants.items():
-            Headers = {"accept": "application/json", "X-Avi-Version": "30.2.1", "X-Avi-Tenant-UUID": f"{uuid}"}
-            vs = requests.get(url=vs_url, auth=HTTPBasicAuth(username, password), headers=Headers, verify=False)
-            time.sleep(2)
-            vs = vs.json()
-            # VS without SNAT
-            list_vs_without_snat = [i["name"] for i in vs["results"] if not i["use_vip_as_snat"]]
-            vs_without_snat[name] = list_vs_without_snat
-            # VS with SNAT
-            list_vs_with_snat = [i["name"] for i in vs["results"] if i["use_vip_as_snat"]]
-            vs_with_snat[name] = list_vs_with_snat
-    return vs_with_snat, vs_without_snat
+    if res.status_code == 200:
+        output = res.json()
+        return output
+    else:
+        return res.status_code
 
 
-if __name__ == "__main__":
-    tenants = get_all_tenants()
-    vs = all_vs(tenants)
-    print("Tenant_name: UUID")
-    print(tenants)
-    print("VS With SNAT , VS Without SNAT")
-    print(vs)
-    print("Total VS")
-    count = 0
-    for i in vs:
-        for key, value in i.items():
-            count += len(value)
-    print(count)
+print(create_vsvip())
